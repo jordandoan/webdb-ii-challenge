@@ -5,12 +5,12 @@ const server = express();
 const port = 5000;
 server.use(express.json());
 
-server.get('/', (req,res) => {
+server.get('/api/cars', (req,res) => {
   db('cars')
     .then(cars => res.status(200).json(cars));
 });
 
-server.get('/:id', (req,res) => {
+server.get('/api/cars/:id', (req,res) => {
   db('cars').where({id: req.params.id})
     .then(car => {
       if (car) {
@@ -21,13 +21,25 @@ server.get('/:id', (req,res) => {
     })
 });
 
-server.post('/', (req,res) => {
+server.post('/api/cars', (req,res) => {
   const car = req.body;
   db('cars').insert(car)
     .then(id => res.status(201).json({id:id[0], ...car}));
 });
 
-server.put('/:id', (req,res) => {
+server.get('/api/sales', (req,res) => {
+  db('sales')
+    .then(sales => res.status(200).json(sales));
+});
+
+server.post('/api/sales', (req,res) => {
+  const sale = req.body;
+  const date = new Date();
+  db('sales').insert({...sale, sale_date: date})
+    .then(id => res.status(201).json({id:id[0], ...sale, sale_date:date}))
+});
+
+server.put('/api/cars/:id', (req,res) => {
   const car = req.body;
   db('cars').where({id: req.params.id}).update(car)
     .then(records => {
@@ -39,7 +51,7 @@ server.put('/:id', (req,res) => {
     })
 });
 
-server.delete('/:id', (req,res) => {
+server.delete('/api/cars/:id', (req,res) => {
   db('cars').where({id: req.params.id})
     .then(records => {
       if (records) {
