@@ -35,8 +35,15 @@ server.get('/api/sales', (req,res) => {
 server.post('/api/sales', (req,res) => {
   const sale = req.body;
   const date = new Date();
-  db('sales').insert({...sale, sale_date: date})
-    .then(id => res.status(201).json({id:id[0], ...sale, sale_date:date}))
+  db('cars').where({id: sale.vehicle_id})
+    .then(car => {
+      if (car) {
+        db('sales').insert({...sale, sale_date: date})
+        .then(id => res.status(201).json({id:id[0], ...sale, sale_date:date}))
+      } else {
+        res.status(400).json({message:"Could not find car with specified ID"});
+      }
+    });
 });
 
 server.put('/api/cars/:id', (req,res) => {
