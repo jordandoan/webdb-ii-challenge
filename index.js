@@ -51,7 +51,7 @@ server.put('/api/cars/:id', (req,res) => {
   db('cars').where({id: req.params.id}).update(car)
     .then(records => {
       if (records) {
-        res.status(201).json({id: id, ...car})
+        res.status(201).json({id: req.params.id, ...car})
       } else {
         res.status(400).json({message: "bad request"})
       }
@@ -59,7 +59,7 @@ server.put('/api/cars/:id', (req,res) => {
 });
 
 server.delete('/api/cars/:id', (req,res) => {
-  db('cars').where({id: req.params.id})
+  db('cars').where({id: req.params.id}).del()
     .then(records => {
       if (records) {
         res.status(201).json({message:"Successfully deleted!"})
